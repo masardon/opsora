@@ -6,15 +6,24 @@ Streamlit-based dashboard for visualizing analytics and recommendations.
 
 import asyncio
 import json
+import sys
+import os
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
+
+# Add app directory to Python path for imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
 
-from config import settings
+try:
+    from config import settings
+except ImportError:
+    # Fallback if config import fails
+    settings = None
 
 
 # =============================================================================
