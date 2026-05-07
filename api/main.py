@@ -272,7 +272,7 @@ async def general_exception_handler(request, exc):
 
 @app.get("/v1/dashboard/overview")
 async def get_dashboard_overview(
-    orchestrator: OrchestratorAgent = Depends(get_orchestrator),
+    orchestrator: Any = Depends(get_orchestrator),
 ):
     """Get dashboard overview data"""
 
