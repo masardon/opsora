@@ -1,52 +1,33 @@
 # Core Framework
-fastapi==0.109.0
-uvicorn[standard]==0.27.0
-pydantic==2.5.3
-pydantic-settings==2.1.0
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
 
-# GCP Dependencies
-google-cloud-bigquery==3.18.0
-google-cloud-pubsub==2.20.0
-google-cloud-storage==2.14.0
-google-cloud-aiplatform==1.45.0
+# GCP Dependencies (optional - for demo, can run without these)
+google-cloud-bigquery>=3.18.0
+google-cloud-pubsub>=2.20.0
+google-cloud-storage>=2.14.0
+google-cloud-aiplatform>=1.47.0
 
-# AI/LLM
-anthropic==0.21.3
-openai==1.12.0
-langchain==0.1.10
-langchain-google-vertexai==1.0.4
-langchain-anthropic==0.1.13
-langgraph==0.0.26
+# AI/LLM (choose based on your provider)
+anthropic>=0.21.3
+openai>=1.12.0
+httpx>=0.26.0
 
 # Data Processing
-pandas==2.2.0
-polars==0.20.15
-numpy==1.26.3
+pandas>=2.2.0
+polars>=0.20.15
+numpy>=1.26.3
 
 # Analytics & ML
-scikit-learn==1.4.0
-statsmodels==0.14.1
-prophet==1.1.5
+scikit-learn>=1.4.0
+statsmodels>=0.14.1
 
 # Dashboard
-streamlit==1.31.0
-plotly==5.18.0
-altair==5.0.1
+streamlit>=1.31.0
+plotly>=5.18.0
 
 # Utilities
-python-dotenv==1.0.0
-httpx==0.26.0
-websockets==12.0
-redis==5.0.1
-celery==5.3.6
-
-# Infrastructure
-docker==7.0.0
-pytest==8.0.0
-pytest-asyncio==0.23.4
-pytest-mock==3.12.0
-
-# Development
-black==24.1.1
-ruff==0.2.1
-mypy==1.8.0
+python-dotenv>=1.0.0
+websockets>=12.0
