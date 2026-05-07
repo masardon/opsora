@@ -1,6 +1,6 @@
 """API Routers Package"""
 
-from api.routers import events, recommendations, analytics, agents
+from . import events, recommendations, analytics, agents
 
 __all__ = [
     "events",
