@@ -15,7 +15,10 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from config import settings
-from api.routers import events, recommendations, analytics, agents
+from api.routers import events as events_router
+from api.routers import recommendations as recommendations_router
+from api.routers import analytics as analytics_router
+from api.routers import agents as agents_router
 from api.websocket.stream import WebSocketManager
 
 
@@ -164,10 +167,10 @@ async def health_check():
 # INCLUDE ROUTERS
 # =============================================================================
 
-app.include_router(events.router, prefix="/v1/events", tags=["Events"])
-app.include_router(recommendations.router, prefix="/v1/recommendations", tags=["Recommendations"])
-app.include_router(analytics.router, prefix="/v1/analytics", tags=["Analytics"])
-app.include_router(agents.router, prefix="/v1/agents", tags=["Agents"])
+app.include_router(events_router.router, prefix="/v1/events", tags=["Events"])
+app.include_router(recommendations_router.router, prefix="/v1/recommendations", tags=["Recommendations"])
+app.include_router(analytics_router.router, prefix="/v1/analytics", tags=["Analytics"])
+app.include_router(agents_router.router, prefix="/v1/agents", tags=["Agents"])
 
 
 # =============================================================================
