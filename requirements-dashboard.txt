@@ -1,0 +1,14 @@
+# Minimal requirements for Dashboard deployment
+
+# Core
+fastapi>=0.109.0
+pydantic>=2.5.0
+requests>=2.31.0
+
+# Dashboard
+streamlit>=1.31.0
+plotly>=5.18.0
+pandas>=2.2.0
+
+# Utilities
+python-dotenv>=1.0.0
