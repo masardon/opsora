@@ -83,6 +83,20 @@ if "selected_recommendation" not in st.session_state:
 
 
 # =============================================================================
+# UTILITIES
+# =============================================================================
+
+def format_idr(amount: int) -> str:
+    """Format amount as Indonesian Rupiah"""
+    if amount >= 1_000_000_000:
+        return f"Rp{amount/1_000_000_000:.1f}B"
+    elif amount >= 1_000_000:
+        return f"Rp{amount/1_000_000:.1f}M"
+    else:
+        return f"Rp{amount:,}".replace(",", ".")
+
+
+# =============================================================================
 # API CLIENT
 # =============================================================================
 
@@ -93,82 +107,113 @@ class OpsoraAPI:
         self.base_url = base_url
 
     def get_dashboard_overview(self) -> Dict[str, Any]:
-        """Get dashboard overview"""
-        # Mock data for demo
+        """Get dashboard overview - Indonesian QSR Data"""
+        # Mock data for demo - Indonesian Fried Chicken QSR
         return {
             "metrics": {
-                "sales": {"revenue": 125000, "growth_rate": 15.3},
-                "operations": {"inventory_turnover": 4.2, "fulfillment_time": 24.5},
-                "customers": {"active": 2340, "nps": 42},
-                "revenue": {"mrr": 85000, "arr": 1020000},
+                "sales": {"revenue": 458500000, "growth_rate": 12.8},  # ~$29K USD in IDR
+                "operations": {"inventory_turnover": 4.8, "fulfillment_time": 18.5},
+                "customers": {"active": 1856, "nps": 48},
+                "revenue": {"mrr": 125000000, "arr": 1500000000},
             },
             "recommendations": {
-                "total": 23,
-                "critical": 2,
-                "high": 5,
-                "medium": 12,
-                "low": 4,
+                "total": 18,
+                "critical": 3,
+                "high": 6,
+                "medium": 7,
+                "low": 2,
             },
         }
 
     def get_recommendations(self, domain: str = None) -> List[Dict[str, Any]]:
-        """Get recommendations"""
-        # Mock data
+        """Get recommendations - Indonesian QSR themed"""
+        # Mock data - QSR business recommendations
         return [
             {
                 "recommendation_id": "rec_001",
-                "title": "Increase marketing spend for high-value segment",
-                "description": "Target the top 20% of customers by value",
+                "title": "Promote Paket Komplit 1 during off-peak hours",
+                "description": "Bundle meal shows 23% higher conversion between 14:00-17:00 in Jakarta stores",
                 "insight_type": "suggestion",
                 "domain": "sales",
-                "confidence": 0.85,
+                "confidence": 0.88,
                 "impact": "high",
                 "urgency": "medium",
-                "effort": "moderate",
-                "composite_score": 0.78,
+                "effort": "easy",
+                "composite_score": 0.82,
                 "status": "pending",
             },
             {
                 "recommendation_id": "rec_002",
-                "title": "Critical: Stockout risk for product SKU-1234",
-                "description": "Inventory levels below safety stock",
+                "title": "Critical: Chicken stock depletion at STR012 (Surabaya)",
+                "description": "Current inventory: 45 pieces, below safety stock of 100. Expected to run out in 3 hours",
                 "insight_type": "alert",
                 "domain": "operations",
-                "confidence": 0.92,
+                "confidence": 0.95,
                 "impact": "high",
                 "urgency": "critical",
                 "effort": "easy",
-                "composite_score": 0.88,
+                "composite_score": 0.92,
                 "status": "pending",
             },
             {
                 "recommendation_id": "rec_003",
-                "title": "Customer sentiment trending negative in support channel",
-                "description": "NPS dropped 8 points in last week",
+                "title": "Customer satisfaction dip in GoFood channel",
+                "description": "Average rating dropped from 4.7 to 4.2 in Bandung area. Check delivery times.",
                 "insight_type": "alert",
                 "domain": "customer",
-                "confidence": 0.78,
+                "confidence": 0.82,
                 "impact": "medium",
                 "urgency": "high",
                 "effort": "moderate",
-                "composite_score": 0.72,
+                "composite_score": 0.76,
+                "status": "pending",
+            },
+            {
+                "recommendation_id": "rec_004",
+                "title": "New MILO Iced beverage trending well",
+                "description": "32% of orders include MILO Iced. Consider promoting as add-on with chicken combos.",
+                "insight_type": "insight",
+                "domain": "sales",
+                "confidence": 0.91,
+                "impact": "medium",
+                "urgency": "low",
+                "effort": "easy",
+                "composite_score": 0.68,
+                "status": "pending",
+            },
+            {
+                "recommendation_id": "rec_005",
+                "title": "Peak hour congestion at STR001 (Jakarta Mall)",
+                "description": "Average prep time: 28min vs target 15min. Consider adding staff during 11:00-13:00.",
+                "insight_type": "suggestion",
+                "domain": "operations",
+                "confidence": 0.86,
+                "impact": "high",
+                "urgency": "high",
+                "effort": "moderate",
+                "composite_score": 0.80,
                 "status": "pending",
             },
         ]
 
     def get_metrics(self, domain: str, time_period: str = "last_30_days") -> Dict[str, Any]:
-        """Get metrics for a domain"""
-        # Mock data
+        """Get metrics for a domain - Indonesian QSR themed"""
+        # Mock data - Indonesian Fried Chicken QSR
         dates = pd.date_range(end=datetime.now(), periods=30, freq="D")
 
         if domain == "sales":
-            values = [45000 + i * 500 + (i % 7) * 1000 for i in range(30)]
+            # Revenue in IDR (millions)
+            base = 14000000  # ~14M IDR per day
+            values = [base + i * 50000 + (i % 7) * 1500000 for i in range(30)]
         elif domain == "operations":
-            values = [4.0 + i * 0.01 + (i % 7) * 0.2 for i in range(30)]
+            # Inventory turnover
+            values = [4.5 + i * 0.01 + (i % 7) * 0.3 for i in range(30)]
         elif domain == "customers":
-            values = [40 + i * 0.2 + (i % 7) * 2 for i in range(30)]
+            # Daily active customers
+            values = [550 + i * 2 + (i % 7) * 80 for i in range(30)]
         else:
-            values = [80000 + i * 500 + (i % 7) * 2000 for i in range(30)]
+            # Revenue in IDR
+            values = [14000000 + i * 50000 + (i % 7) * 1500000 for i in range(30)]
 
         return {
             "dates": dates.strftime("%Y-%m-%d").tolist(),
@@ -264,7 +309,7 @@ def render_overview_page(time_period: str):
     with col1:
         sales_rev = metrics["sales"]["revenue"]
         sales_growth = metrics["sales"]["growth_rate"]
-        st.metric("Revenue", f"${sales_rev:,.0f}", f"{sales_growth}%")
+        st.metric("Revenue", format_idr(sales_rev), f"+{sales_growth}%")
 
     with col2:
         ops_turnover = metrics["operations"]["inventory_turnover"]
@@ -276,7 +321,7 @@ def render_overview_page(time_period: str):
 
     with col4:
         rev_mrr = metrics["revenue"]["mrr"]
-        st.metric("MRR", f"${rev_mrr:,}")
+        st.metric("MRR", format_idr(rev_mrr))
 
     st.markdown("---")
 
@@ -286,12 +331,15 @@ def render_overview_page(time_period: str):
     with col1:
         st.subheader("Revenue Trend")
         sales_metrics = api.get_metrics("sales", time_period)
+        # Convert to millions for display
+        values_millions = [v / 1_000_000 for v in sales_metrics["values"]]
         fig = px.line(
             x=sales_metrics["dates"],
-            y=sales_metrics["values"],
-            title="Revenue Over Time",
-            labels={"x": "Date", "y": "Revenue"},
+            y=values_millions,
+            title="Revenue Over Time (IDR Millions)",
+            labels={"x": "Date", "y": "Revenue (Millions IDR)"},
         )
+        fig.update_layout(yaxis_tickformat=',.0f')
         st.plotly_chart(fig, use_container_width=True)
 
     with col2:
@@ -507,29 +555,29 @@ def render_agents_page(time_period: str):
             "name": "Sales Agent",
             "status": "active",
             "last_analysis": "2 hours ago",
-            "recommendations": 8,
-            "description": "Analyzes sales performance, revenue trends, and customer behavior",
+            "recommendations": 5,
+            "description": "Analyzes menu item performance, combo meal conversions, and channel sales (app, GoFood, GrabFood)",
         },
         "operations": {
             "name": "Operations Agent",
             "status": "active",
-            "last_analysis": "4 hours ago",
+            "last_analysis": "45 minutes ago",
             "recommendations": 6,
-            "description": "Analyzes operational efficiency, inventory, and supply chain",
+            "description": "Monitors inventory levels across 50 stores, tracks preparation times, and alerts on stockouts",
         },
         "customer": {
             "name": "Customer Agent",
             "status": "active",
             "last_analysis": "1 hour ago",
-            "recommendations": 5,
-            "description": "Analyzes customer behavior, sentiment, and engagement",
+            "recommendations": 4,
+            "description": "Analyzes customer satisfaction by channel, segments customers, and tracks ordering patterns",
         },
         "revenue": {
             "name": "Revenue Agent",
             "status": "active",
-            "last_analysis": "3 hours ago",
-            "recommendations": 4,
-            "description": "Analyzes revenue streams, pricing, and financial performance",
+            "last_analysis": "30 minutes ago",
+            "recommendations": 3,
+            "description": "Tracks revenue across Indonesian cities, analyzes peak hour patterns, and optimizes pricing",
         },
     }
 
