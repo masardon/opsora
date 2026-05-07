@@ -1,0 +1,37 @@
+# Opsora Deployment Configuration for Zeabur
+
+# Configuration for deploying Opsora to Zeabur platform
+
+# This file defines the services and their deployment settings
+
+version: "1.0"
+
+services:
+  # API Service
+  - name: opsora-api
+    type: container
+    container:
+      build:
+        type: dockerfile
+        dockerfile: Dockerfile
+      ports:
+        - 8000
+      env:
+        - API_HOST=0.0.0.0
+        - API_PORT=8000
+        - API_RELOAD=false
+        - API_WORKERS=4
+      command: uvicorn api.main:app --host 0.0.0.0 --port 8000
+
+  # Dashboard Service
+  - name: opsora-dashboard
+    type: container
+    container:
+      build:
+        type: dockerfile
+        dockerfile: Dockerfile
+      ports:
+        - 8501
+      env:
+        - API_URL=https://opsora-api.zeabur.app
+      command: streamlit run dashboard/streamlit_app.py --server.port=8501 --server.address=0.0.0.0

@@ -1,0 +1,83 @@
+# Opsora Docker Compose Configuration
+# For local development and testing
+
+version: '3.8'
+
+services:
+  # API Server
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: opsora-api
+    ports:
+      - "8000:8000"
+    environment:
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID:-your-project-id}
+      - GCP_REGION=${GCP_REGION:-us-central1}
+      - BIGQUERY_DATASET=${BIGQUERY_DATASET:-opsora}
+      - LLM_PROVIDER=${LLM_PROVIDER:-anthropic}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+    volumes:
+      - .:/app
+      - ./logs:/app/logs
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      - redis
+    networks:
+      - opsora-network
+
+  # Dashboard
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: opsora-dashboard
+    ports:
+      - "8501:8501"
+    environment:
+      - API_URL=http://api:8000
+    volumes:
+      - .:/app
+    command: streamlit run dashboard/streamlit_app.py --server.port=8501 --server.address=0.0.0.0
+    depends_on:
+      - api
+    networks:
+      - opsora-network
+
+  # Redis (for caching and pub/sub)
+  redis:
+    image: redis:7-alpine
+    container_name: opsora-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - opsora-network
+
+  # Grafana (optional, for metrics visualization)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: opsora-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - opsora-network
+    profiles:
+      - monitoring
+
+volumes:
+  redis-data:
+  grafana-data:
+
+networks:
+  opsora-network:
+    driver: bridge
