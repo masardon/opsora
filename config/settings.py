@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 from typing import Literal, List
 
-from pydantic import Field, field_validator
+from pydantic import BaseModel, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -151,14 +151,3 @@ def get_settings() -> Settings:
     """Get settings instance (for dependency injection)"""
     return settings
 
-
-# Import fix
-from pydantic import BaseModel
-
-# Re-export with BaseModel available
-LLMProvider.__bases__ = (BaseModel,)
-GCPConfig.__bases__ = (BaseModel,)
-PubSubConfig.__bases__ = (BaseModel,)
-AgentConfig.__bases__ = (BaseModel,)
-APIConfig.__bases__ = (BaseModel,)
-DashboardConfig.__bases__ = (BaseModel,)
