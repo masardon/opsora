@@ -1450,7 +1450,17 @@ def render_ai_assistant_page():
         for i, (label, question) in enumerate(quick_questions):
             with cols[i % 4]:
                 if st.button(label, key=f"quick_{i}", use_container_width=True):
+                    # Add user message
                     st.session_state.chat_messages.append({"role": "user", "content": question})
+                    # Get AI response
+                    response = api.ask_ai(question)
+                    # Add assistant message
+                    st.session_state.chat_messages.append({
+                        "role": "assistant",
+                        "content": response["answer"],
+                        "insights": response.get("insights", []),
+                        "recommendations": response.get("recommendations", []),
+                    })
                     st.rerun()
 
     # Chat container
