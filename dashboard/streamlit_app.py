@@ -462,7 +462,7 @@ class OpsoraAPI:
                              "1. Frying station: 62% of prep time (only 2 fryers)\n"
                              "2. Assembly station: 24% of prep time\n"
                              "3. Packaging: 14% of prep time\n\n"
-                             "**Opportunity:** Adding 1 fryer at high-volume stores could reduce prep time by 35% during peak.",
+                             "**Opportunity:** Adding 1 fryer at high-volume stores could reduce prep time by 35% during peak."),
                     "insights": [
                         {"metric": "Avg Prep Time", "value": "18.5 min", "change": "+23% vs target"},
                         {"metric": "Peak Time", "value": "26 min", "change": "+73%"},
@@ -563,8 +563,8 @@ class OpsoraAPI:
                              "| App Push: MILO Iced | Rp1.2M | 856 | 8.6x | 12.3% |\n"
                              "| Instagram Ads | Rp5M | 312 | 0.9x | 2.1% ❌ |\n\n"
                              "**Winner:** App Push notifications have 8.6x ROAS. **Loser:** Instagram ads not converting.\n\n"
-                             "**Audience insights:** Best response from 25-34 age group (68% of conversions). "
-                             "Weak response from 45+ (only 8% of conversions)."),
+                             "**Audience insights:** Best response from 25-34 age group [68% of conversions]. "
+                             "Weak response from 45+ [only 8% of conversions]."),
                     "insights": [
                         {"metric": "Best ROAS", "value": "App Push", "change": "8.6x"},
                         {"metric": "Worst ROAS", "value": "Instagram Ads", "change": "0.9x"},
@@ -807,7 +807,7 @@ class OpsoraAPI:
                              "**Understaffed:** 7 stores (deficit 12 FTE, losing orders)\n\n"
                              "**Shift Optimization:**\n"
                              "Converting 8-hour shifts to 4-hour split shifts saves Rp5.2M/month while maintaining coverage.\n\n"
-                             "**Staff Retention:** Current annual turnover: 68% (industry: 85%). Top performers: "
+                             "**Staff Retention:** Current annual turnover: 68% [industry: 85%]. Top performers: "
                              "Jakarta stores (42% turnover), High churn: Makassar (94% turnover)."),
                     "insights": [
                         {"metric": "Labor % Revenue", "value": "15.8%", "change": "+1.8pp"},
@@ -875,26 +875,27 @@ class OpsoraAPI:
                 "answer": ("**Menu Engineering Matrix:**\n\n"
                           "```\n"
                           "High Margin\n"
-                          "    ▲\n"
-                          "  ⭐ | PL     | STAR   |\n"
-                          "    |------------------→\n "    |        |        |\n"
+                          "    A\n"
+                          "  STAR | PL     | STAR   |\n"
+                          "    |------------------|\n"
+                          "    |        |        |\n"
                           "    |------------------|\n"
                           "    | DOG    | PUZZLE |\n"
-                          "    ▼\n"
+                          "    V\n"
                           "Low Margin    Low Volume      High Volume\n"
                           "```\n\n"
                           "**STARS** (High margin, High volume) - Keep, promote:\n"
-                          "• Paket Komplit 1 (42% margin, 34% of orders)\n"
-                          "• Ayam Potong 9 (38% margin, 18% of orders)\n\n"
+                          "- Paket Komplit 1 (42% margin, 34% of orders)\n"
+                          "- Ayam Potong 9 (38% margin, 18% of orders)\n\n"
                           "**PLOWS** (High margin, Low volume) - Push, feature:\n"
-                          "• Party Bucket 20 (42% margin, 2% of orders) - Upsell opportunity!\n"
-                          "• Winger Bucket 7 (40% margin, 3% of orders)\n\n"
+                          "- Party Bucket 20 (42% margin, 2% of orders) - Upsell opportunity!\n"
+                          "- Winger Bucket 7 (40% margin, 3% of orders)\n\n"
                           "**PUZZLES** (Low margin, High volume) - Improve efficiency:\n"
-                          "• Ayam Potong 3 (28% margin, 15% of orders) - Raise price or bundle\n"
-                          "• Fries (35% margin, 12% of orders) - Good, consider upsize\n\n"
+                          "- Ayam Potong 3 (28% margin, 15% of orders) - Raise price or bundle\n"
+                          "- Fries (35% margin, 12% of orders) - Good, consider upsize\n\n"
                           "**DOGS** (Low margin, Low volume) - Remove or bundle:\n"
-                          "• Coleslaw (18% margin, 2% of orders) - Discontinue\n"
-                          "• Bread & Butter (12% margin, 1% of orders) - Bundle only\n\n"
+                          "- Coleslaw (18% margin, 2% of orders) - Discontinue\n"
+                          "- Bread & Butter (12% margin, 1% of orders) - Bundle only\n\n"
                           "**Potential Impact:** Removing 2 DOG items and promoting 2 PLOW items could add **Rp18.5M/month** in profit."),
                 "insights": [
                     {"metric": "Stars Count", "value": "2 items", "change": "keep & promote"},
