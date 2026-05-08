@@ -238,104 +238,718 @@ class OpsoraAPI:
         }
 
     def ask_ai(self, question: str, context: Dict = None) -> Dict[str, Any]:
-        """Ask AI assistant a question about the business"""
+        """Ask AI assistant a question about the business - Comprehensive QSR Analytics"""
 
-        # Simulate AI analysis based on question keywords
         question_lower = question.lower()
 
-        # Sales questions
-        if any(word in question_lower for word in ["revenue", "sales", "income", "earning"]):
-            if "forecast" in question_lower or "predict" in question_lower:
+        # =============================================================================
+        # SALES & REVENUE ANALYTICS
+        # =============================================================================
+
+        if any(word in question_lower for word in ["revenue", "sales", "income", "earning", "growth"]):
+
+            # Revenue forecast with multiple scenarios
+            if any(word in question_lower for word in ["forecast", "predict", "projection", "future", "next month", "next quarter"]):
+
+                # Check for specific forecast type
+                if "worst" in question_lower or "pessimistic" in question_lower:
+                    return {
+                        "answer": ("📉 **Pessimistic Forecast**: Supply chain disruptions and competitor promotions "
+                                 "could reduce growth to 4-6%. Projected revenue: Rp476M- Rp485M next month. "
+                                 "Key risks: Chicken price increase (+15%), new competitor in Bandung."),
+                        "insights": [
+                            {"metric": "Pessimistic Revenue", "value": "Rp476M", "change": "+4%"},
+                            {"metric": "Confidence", "value": "65%", "change": ""},
+                            {"metric": "Key Risk", "value": "Competition", "change": ""},
+                        ],
+                        "recommendations": [
+                            "Secure alternative chicken suppliers as backup",
+                            "Prepare counter-promotional strategy",
+                            "Build cash reserves for 6 months of operations",
+                        ],
+                    }
+
+                elif "best" in question_lower or "optimistic" in question_lower:
+                    return {
+                        "answer": ("📈 **Optimistic Forecast**: With viral marketing and Ramadhan season, "
+                                 "growth could reach 18-22%. Projected revenue: Rp540M - Rp560M next month. "
+                                 "Key opportunities: Holiday bundles, corporate catering."),
+                        "insights": [
+                            {"metric": "Optimistic Revenue", "value": "Rp560M", "change": "+22%"},
+                            {"metric": "Confidence", "value": "72%", "change": ""},
+                            {"metric": "Key Opportunity", "value": "Seasonal", "change": ""},
+                        ],
+                        "recommendations": [
+                            "Launch Ramadhan special bundles 2 weeks early",
+                            "Partner with 5-10 local offices for catering",
+                            "Increase inventory buffer to 30%",
+                        ],
+                    }
+
+                else:  # Base case
+                    return {
+                        "answer": ("📊 **Revenue Forecast**: Based on 12.8% CAGR and seasonal factors, "
+                                 "I project **Rp520M next month** (+13.4% MoM). Breakdown by channel: "
+                                 "App (42%), GoFood (26%), GrabFood (23%), In-store (9%). "
+                                 "\n\n**Key drivers:** Ramadhan season (+8%), viral MILO Iced (+3%), price optimization (+2.4%). "
+                                 "**Key risks:** Chicken supplier constraints, 2 new competitors in East Java."),
+                        "insights": [
+                            {"metric": "Base Forecast", "value": "Rp520M", "change": "+13.4%"},
+                            {"metric": "Confidence", "value": "87%", "change": ""},
+                            {"metric": "Seasonality", "value": "Ramadhan", "change": "+8%"},
+                            {"metric": "Viral Item Lift", "value": "MILO Iced", "change": "+3%"},
+                        ],
+                        "recommendations": [
+                            "Increase chicken inventory by 25% for Ramadhan demand",
+                            "Prep 500 extra MILO Iced daily before peak hours",
+                            "Monitor competitor pricing in Surabaya market",
+                            "Schedule staff 2 weeks before Ramadhan starts",
+                        ],
+                    }
+
+            # Channel analysis
+            elif any(word in question_lower for word in ["channel", "grabfood", "gofood", "delivery", "app"]):
                 return {
-                    "answer": ("Based on current trends (12.8% growth rate) and seasonal patterns, "
-                             "I forecast revenue of Rp520M next month (+13% from current). "
-                             "Key drivers: Ramadhan season approaching, GoFood orders up 18%."),
+                    "answer": ("**Channel Performance Analysis:**\n\n"
+                             "| Channel | Orders | Revenue | Avg Order | Growth |\n"
+                             "|---------|--------|---------|-----------|--------|\n"
+                             "| GoFood  | 2,188  | Rp115M  | Rp52,500  | +18%   |\n"
+                             "| App     | 3,536  | Rp192M  | Rp54,300  | +15%   |\n"
+                             "| GrabFood| 1,935  | Rp98M   | Rp50,600  | +22%   |\n"
+                             "| In-store| 761    | Rp53M   | Rp69,600  | -3%    |\n\n"
+                             "**Insights:** GrabFood growing fastest (+22%) due to new promo integration. "
+                             "In-store declining as dine-in culture shifts post-pandemic. "
+                             "App has highest AOV due to combo upselling (42% attach rate)."),
                     "insights": [
-                        {"metric": "Revenue Forecast", "value": "Rp520M", "change": "+13%"},
-                        {"metric": "Confidence", "value": "87%", "change": ""},
-                        {"metric": "Key Driver", "value": "Seasonal demand", "change": ""},
+                        {"metric": "Best Growth", "value": "GrabFood", "change": "+22%"},
+                        {"metric": "Highest AOV", "value": "App", "change": "Rp54,300"},
+                        {"metric": "Market Share", "value": "App", "change": "42%"},
                     ],
                     "recommendations": [
-                        "Increase chicken inventory by 25% for Ramadhan",
-                        "Prepare special combo packages for iftar",
-                        "Schedule additional staff for peak hours (17:00-19:00)",
+                        "Negotiate better commission with GrabFood (currently 18%)",
+                        "Replicate GrabFood promo structure on GoFood",
+                        "Add in-store kiosks to convert dine-in to takeaway",
+                        "A/B test combo bundling on delivery apps",
                     ],
                 }
-            else:
+
+            # Product mix analysis
+            elif any(word in question_lower for word in ["product", "menu", "item", "selling", "popular", "best sell"]):
                 return {
-                    "answer": (f"Current revenue is Rp458.5M with a 12.8% growth rate. "
-                             "Top performing stores are in Jakarta (32% of revenue) and Surabaya (18%). "
-                             "GoFood channel contributes 25% of total orders."),
+                    "answer": ("**Menu Performance Matrix (Star vs Dog Analysis):**\n\n"
+                             "⭐ **STARS** (High volume, High margin): Paket Komplit 1, Ayam Potong 9, MILO Iced\n"
+                             "🐴 **DOGS** (Low volume, Low margin): Coleslaw, Bread & Butter\n"
+                             "❓ **PUZZLES** (High volume, Low margin): Ayam Potong 3, Fries\n"
+                             "💎 **PLOWS** (Low volume, High margin): Party Bucket 20, Winger Bucket 7\n\n"
+                             "**Optimization Opportunity:** Promoting Party Bucket could add Rp8.5M weekly revenue "
+                             "with minimal incremental cost. Low-performing sides (Coleslaw) consume prep time "
+                             "for 2.3% of revenue - consider removing or bundling."),
+                    "insights": [
+                        {"metric": "Best Volume", "value": "Paket Komplit 1", "change": "34% orders"},
+                        {"metric": "Best Margin", "value": "Party Bucket 20", "change": "42% GM"},
+                        {"metric": "Removal Candidate", "value": "Coleslaw", "change": "2.3% rev"},
+                    ],
+                    "recommendations": [
+                        "Feature Party Bucket 20 in app carousel (target: 15% orders)",
+                        "Bundle low-margin sides (coleslaw + bread) with combos",
+                        "Discontinue standalone coleslaw to free up prep capacity",
+                        "Create 'Family Feast' promo for Party Bucket + 2 drinks",
+                    ],
+                }
+
+            # Price sensitivity analysis
+            elif any(word in question_lower for word in ["price", "pricing", "margin", "profit", "cost"]):
+                return {
+                    "answer": ("**Pricing & Margin Analysis:**\n\n"
+                             "Current blended margin: **32.5%** (down from 34.2% last quarter)\n"
+                             "**Margin compression drivers:** Chicken cost (+15%), delivery app commissions (avg 22%), "
+                             "promotional discounts (8% of orders)\n\n"
+                             "**Price elasticity testing:** 5% price increase on Ayam Potong 3 reduced volume by 8% "
+                             "(elasticity: -1.6). MILO Iced shows inelastic behavior (10% price increase = 3% volume drop).\n\n"
+                             "**Optimization potential:** Dynamic pricing during off-peak hours could add Rp12M/month."),
+                    "insights": [
+                        {"metric": "Current Margin", "value": "32.5%", "change": "-1.7pp"},
+                        {"metric": "Cost Pressure", "value": "Chicken", "change": "+15%"},
+                        {"metric": "Inelastic Item", "value": "MILO Iced", "change": "elasticity -0.3"},
+                    ],
+                    "recommendations": [
+                        "Increase MILO Iced price by 8% (minimal volume impact expected)",
+                        "Implement off-peak discounts (14:00-17:00) instead of blanket promos",
+                        "Negotiate volume discounts with chicken supplier (commit to 6-month contract)",
+                        "Test subscription bundle (10 meals/month at 15% discount) to lock in customers",
+                    ],
+                }
+
+            else:  # General revenue
+                return {
+                    "answer": (f"Current revenue is **Rp458.5M** with a **12.8% growth rate**. "
+                             f"Top performers: Jakarta Mall #1 (Rp82M/mo), Surabaya Central (Rp58M/mo). "
+                             f"GoFood channel: 26% of orders. Best-selling: Paket Komplit 1 (34% of all orders)."),
                     "insights": [
                         {"metric": "Current Revenue", "value": "Rp458.5M", "change": "+12.8%"},
-                        {"metric": "Top Store", "value": "Jakarta Mall #1", "change": "32% share"},
-                        {"metric": "Best Channel", "value": "GoFood", "change": "25% orders"},
+                        {"metric": "Top Store", "value": "Jakarta Mall #1", "change": "Rp82M/mo"},
+                        {"metric": "Best Channel", "value": "GoFood", "change": "26% orders"},
                     ],
                     "recommendations": [
-                        "Expand GoFood presence in underperforming cities",
-                        "Replicate Jakarta Mall #1 practices to other locations",
+                        "Expand GoFood presence in Makassar (untapped market)",
+                        "Replicate Jakarta Mall #1 practices to low-performing stores",
+                        "Increase Paket Komplit 1 inventory buffer to 20%",
                     ],
                 }
 
-        # Inventory questions
-        elif any(word in question_lower for word in ["inventory", "stock", "supply", "chicken"]):
+        # =============================================================================
+        # INVENTORY & OPERATIONS ANALYTICS
+        # =============================================================================
+
+        elif any(word in question_lower for word in ["inventory", "stock", "supply", "chicken", "waste", "spoil"]):
+
+            # Supplier performance
+            if any(word in question_lower for word in ["supplier", "vendor", "source", "procurement"]):
+                return {
+                    "answer": ("**Supplier Performance Scorecard:**\n\n"
+                             "| Supplier | On-Time | Quality | Cost | Issues |\n"
+                             "|----------|---------|---------|------|--------|\n"
+                             "| PT Ayam Jaya | 94% | 4.7/5 | Base | 3 late deliveries |\n"
+                             "| CV Ungkep Mas | 78% | 4.2/5 | -8% | 12 quality issues |\n"
+                             "| Fresh Chicken Co | 89% | 4.5/5 | +5% | Inconsistent sizing |\n\n"
+                             "**Recommendation:** Diversify to 3 suppliers to reduce risk. Current single-source "
+                             "dependency creates vulnerability - 1 supplier delay affects 15 stores."),
+                    "insights": [
+                        {"metric": "Best Supplier", "value": "PT Ayam Jaya", "change": "94% on-time"},
+                        {"metric": "Risk Level", "value": "HIGH", "change": "Single source"},
+                        {"metric": "Cost Saving", "value": "Potential 8%", "change": "if switch"},
+                    ],
+                    "recommendations": [
+                        "Onboard 2nd supplier by end of month (target: CV Ungkep with quality penalty clause)",
+                        "Negotiate volume discount with PT Ayam Jaya for 12-month commitment",
+                        "Build 3-day inventory buffer at Jakarta distribution center",
+                    ],
+                }
+
+            # Waste analysis
+            elif any(word in question_lower for word in ["waste", "spoil", "loss", "throw", "excess"]):
+                return {
+                    "answer": ("**Food Waste Analysis:**\n\n"
+                             "Total waste: **Rp18.5M/month** (4% of COGS)\n\n"
+                             "**Breakdown:**\n"
+                             "• Chicken spoilage: Rp8.2M (44%) - typically expires at 3 stores\n"
+                             "• Prep errors: Rp5.1M (28%) - wrong cuts, over-portioning\n"
+                             "• Sides过期: Rp3.8M (20%) - coleslaw, mashed potatoes\n"
+                             "• Burnt/undercooked: Rp1.4M (8%)\n\n"
+                             "**Hotspots:** STR012 (Surabaya) - Rp2.8M/mo, STR003 (Bandung) - Rp2.1M/mo"),
+                    "insights": [
+                        {"metric": "Monthly Waste", "value": "Rp18.5M", "change": "4% COGS"},
+                        {"metric": "Worst Store", "value": "STR012 Surabaya", "change": "Rp2.8M/mo"},
+                        {"metric": "Savings Potential", "value": "Rp12M/mo", "change": "if fixed"},
+                    ],
+                    "recommendations": [
+                        "Implement dynamic prep based on hourly demand forecasting (saves ~Rp4M/mo)",
+                        "Train staff on portion control at STR012 and STR003",
+                        "Reduce sides batch size by 30% during off-peak hours",
+                        "Donate near-expire items to local food banks (tax deduction + CSR)",
+                    ],
+                }
+
+            # Prep time optimization
+            elif any(word in question_lower for word in ["prep", "preparation", "speed", "time", "fast", "slow", "efficiency"]):
+                return {
+                    "answer": ("**Preparation Time Analysis:**\n\n"
+                             "**Current Stats:**\n"
+                             "• Average prep time: 18.5 min (target: 15 min)\n"
+                             "• Peak hour (11-13, 18-20): 26 min (critical issue)\n"
+                             "• Off-peak (14-17): 12 min (within target)\n\n"
+                             "**Bottleneck Analysis:**\n"
+                             "1. Frying station: 62% of prep time (only 2 fryers)\n"
+                             "2. Assembly station: 24% of prep time\n"
+                             "3. Packaging: 14% of prep time\n\n"
+                             "**Opportunity:** Adding 1 fryer at high-volume stores could reduce prep time by 35% during peak.",
+                    "insights": [
+                        {"metric": "Avg Prep Time", "value": "18.5 min", "change": "+23% vs target"},
+                        {"metric": "Peak Time", "value": "26 min", "change": "+73%"},
+                        {"metric": "Bottleneck", "value": "Frying Station", "change": "62%"},
+                    ],
+                    "recommendations": [
+                        "Install 3rd fryer at top 10 stores (ROI: 2.3 months)",
+                        "Pre-prep popular items during off-peak (chicken cutting, sides)",
+                        "Cross-train staff on assembly station",
+                        "Implement KDS (Kitchen Display System) to prioritize orders",
+                    ],
+                }
+
+            else:  # General inventory
+                return {
+                    "answer": ("**Inventory Status:** 3 stores below safety stock. **CRITICAL:** STR012 (Surabaya) "
+                             "has 45 pieces vs 100 safety stock - runs out in ~3 hours. Average turnover: 4.8x. "
+                             "5 locations need restock within 6 hours. Supplier delay risk: MEDIUM (2 late this month)."),
+                    "insights": [
+                        {"metric": "Critical Stockouts", "value": "3 stores", "change": ""},
+                        {"metric": "Inventory Turnover", "value": "4.8x", "change": "+0.3"},
+                        {"metric": "Urgent Restock", "value": "5 locations", "change": ""},
+                    ],
+                    "recommendations": [
+                        "Emergency delivery to STR012 within 3 hours",
+                        "Review safety stock levels (currently 4hrs - recommend 6hrs)",
+                        "Consider emergency supplier for East Java region",
+                    ],
+                }
+
+        # =============================================================================
+        # CUSTOMER & MARKETING ANALYTICS
+        # =============================================================================
+
+        elif any(word in question_lower for word in ["customer", "nps", "satisfaction", "rating", "review", "churn", "retention", "loyal"]):
+
+            # Customer segmentation
+            if any(word in question_lower for word in ["segment", "persona", "profile", "type of customer"]):
+                return {
+                    "answer": ("**Customer Segmentation Analysis:**\n\n"
+                             "| Segment | Size | Avg Spend | Freq | LTV | Churn Risk |\n"
+                             "|---------|------|-----------|------|-----|------------|\n"
+                             "| Heavy Users | 23% | Rp285K | 5.2/wk | Rp3.8M | Low |\n"
+                             "| Regular | 48% | Rp142K | 2.1/wk | Rp1.1M | Medium |\n"
+                             "| Occasional | 22% | Rp68K | 0.8/mo | Rp280K | High |\n"
+                             "| Lapsed | 7% | Rp0 | 0 | Rp420K | N/A |\n\n"
+                             "**Insight:** Heavy Users (23% of customers) drive 58% of revenue. "
+                             "Occasional segment (22%) has high upside - targeted win-back could add Rp32M/month."),
+                    "insights": [
+                        {"metric": "High-Value Segment", "value": "Heavy Users", "change": "23% size"},
+                        {"metric": "Revenue Concentration", "value": "58%", "change": "from 23%"},
+                        {"metric": "Win-back Opportunity", "value": "Rp32M/mo", "change": "potential"},
+                    ],
+                    "recommendations": [
+                        "Launch VIP program for Heavy Users (exclusive offers, priority support)",
+                        "Target Occasional segment with 'Come Back' promo (30% off next order)",
+                        "Reactivation campaign for Lapsed (email: 'We miss you! Free MILO Iced')",
+                        "Create referral bonus (Heavy Users get Rp10K for each friend)",
+                    ],
+                }
+
+            # Churn analysis
+            elif any(word in question_lower for word in ["churn", "leaving", "leave", "lost customer", "retention"]):
+                return {
+                    "answer": ("**Churn Analysis:**\n\n"
+                             "**Monthly Churn Rate:** 8.3% (up from 6.1% last quarter)\n"
+                             "**At-risk customers:** 234 (12.6% of active base)\n\n"
+                             "**Top Churn Drivers:**\n"
+                             "1. Price sensitivity: 34% (switched to competitors with promos)\n"
+                             "2. Delivery delays: 28% (GoFood ratings issue in Bandung)\n"
+                             "3. Quality inconsistency: 18% (undercooked/overcooked complaints)\n"
+                             "4. App usability: 12% (checkout friction)\n"
+                             "5. Location: 8% (moved, no store nearby)\n\n"
+                             "**Highest churn:** Makassar (12.1%), Bandung (11.8%) | Lowest: Jakarta (5.2%)"),
+                    "insights": [
+                        {"metric": "Churn Rate", "value": "8.3%", "change": "+2.2pp"},
+                        {"metric": "At-Risk Customers", "value": "234", "change": "12.6%"},
+                        {"metric": "Highest Churn City", "value": "Makassar", "change": "12.1%"},
+                    ],
+                    "recommendations": [
+                        "Launch price-match guarantee for Heavy Users (retention tool)",
+                        "Fix Bandung GoFood delivery issues (partner with local riders)",
+                        "Implement kitchen quality checks (photos before packaging)",
+                        "Simplify app checkout (reduce from 5 steps to 3 steps)",
+                        "Target Makassar with retention promo (buy 5 get 1 free)",
+                    ],
+                }
+
+            # Campaign effectiveness
+            elif any(word in question_lower for word in ["campaign", "promo", "promotion", "marketing", "advertisement", "ads"]):
+                return {
+                    "answer": ("**Marketing Campaign Performance:**\n\n"
+                             "**Active Campaigns (Last 30 Days):**\n\n"
+                             "| Campaign | Spend | Orders | ROAS | Conv. Rate |\n"
+                             "|----------|-------|--------|------|------------|\n"
+                             "| GoFood Promo | Rp8.5M | 1,245 | 3.2x | 8.5% |\n"
+                             "| GrabFood Mega Sale | Rp12M | 1,428 | 2.4x | 6.2% |\n"
+                             "| App Push: MILO Iced | Rp1.2M | 856 | 8.6x | 12.3% |\n"
+                             "| Instagram Ads | Rp5M | 312 | 0.9x | 2.1% ❌ |\n\n"
+                             "**Winner:** App Push notifications have 8.6x ROAS. **Loser:** Instagram ads not converting.\n\n"
+                             "**Audience insights:** Best response from 25-34 age group (68% of conversions). "
+                             "Weak response from 45+ (only 8% of conversions)."),
+                    "insights": [
+                        {"metric": "Best ROAS", "value": "App Push", "change": "8.6x"},
+                        {"metric": "Worst ROAS", "value": "Instagram Ads", "change": "0.9x"},
+                        {"metric": "Best Audience", "value": "25-34", "change": "68% conv"},
+                    ],
+                    "recommendations": [
+                        "Pause Instagram ads (realloc Rp5M to app push and GoFood)",
+                        "Increase app push frequency to 2x/week (currently 1x)",
+                        "A/B test promo codes (15% off vs buy 1 get 1)",
+                        "Target 25-34 demographic with video content on TikTok (untapped)",
+                        "Create referral program (leverages high ROAS channel)",
+                    ],
+                }
+
+            # CLV analysis
+            elif any(word in question_lower for word in ["lifetime value", "ltv", "clv", "customer value", "worth"]):
+                return {
+                    "answer": ("**Customer Lifetime Value Analysis:**\n\n"
+                             "**Average CLV:** Rp1,420,000 (based on 18-month active period)\n\n"
+                             "**CLV by Segment:**\n"
+                             "• Heavy Users: Rp3.8M (2.7x average)\n"
+                             "• Regular: Rp1.1M (0.8x average)\n"
+                             "• Occasional: Rp280K (0.2x average)\n\n"
+                             "**CLV vs CAC:**\n"
+                             "• Average CAC (Cost Acquisition Customer): Rp185,000\n"
+                             "• LTV:CAC Ratio: 7.7x (healthy benchmark is 3x+)\n\n"
+                             "**Payback Period:** 4.2 months (customer becomes profitable after 5th order)\n\n"
+                             "**Opportunity:** Increasing Heavy User share from 23% to 30% would increase average CLV by 16%."),
+                    "insights": [
+                        {"metric": "Avg CLV", "value": "Rp1.42M", "change": ""},
+                        {"metric": "LTV:CAC Ratio", "value": "7.7x", "change": "excellent"},
+                        {"metric": "Payback Period", "value": "4.2 months", "change": ""},
+                    ],
+                    "recommendations": [
+                        "Increase acquisition budget by 50% (still profitable at 7.7x ratio)",
+                        "Focus acquisition on channels that bring Heavy Users (app, referrals)",
+                        "Reduce promo spend on low-CLV segments (occasional customers)",
+                        "Implement subscription model (guarantees 12-month retention)",
+                    ],
+                }
+
+            else:  # General customer
+                return {
+                    "answer": ("**Customer Metrics:** NPS is **48** (above industry avg 42). Active customers: **1,856** (+12%). "
+                             "Heavy users (5+ orders/week): 23%. GoFood ratings dropped to **4.2 in Bandung** (investigating). "
+                             "Churn rate: 8.3% (up from 6.1%)."),
+                    "insights": [
+                        {"metric": "NPS Score", "value": "48", "change": "+6 vs industry"},
+                        {"metric": "Active Customers", "value": "1,856", "change": "+12%"},
+                        {"metric": "Heavy Users", "value": "23%", "change": "+3%"},
+                        {"metric": "Churn Rate", "value": "8.3%", "change": "+2.2pp"},
+                    ],
+                    "recommendations": [
+                        "Investigate Bandung GoFood delivery delays immediately",
+                        "Launch loyalty program for Heavy Users (priority tier)",
+                        "Implement win-back campaign for churned customers",
+                    ],
+                }
+
+        # =============================================================================
+        # FINANCIAL & STRATEGY ANALYTICS
+        # =============================================================================
+
+        elif any(word in question_lower for word in ["profit", "margin", "financial", "p&l", "income statement", "cash flow", "break even", "roi", "expansion", "new store", "open"]):
+
+            # Expansion planning
+            if any(word in question_lower for word in ["expansion", "new store", "open", "location", "where should", "next store"]):
+                return {
+                    "answer": ("**Store Expansion Analysis:**\n\n"
+                             "**Top 5 Locations for New Stores (Scored by market potential):**\n\n"
+                             "1. **Bekasi** (Score: 92/100)\n"
+                             "   • Population: 3.2M, Median age: 29\n"
+                             "   • Competitors: 2 QSR chains\n"
+                             "   • Est. monthly revenue: Rp68-75M\n"
+                             "   • Investment: Rp450M, Payback: 18 months\n\n"
+                             "2. **Tangerang** (Score: 88/100)\n"
+                             "   • High income area, low competition\n"
+                             "   • Est. monthly revenue: Rp62-70M\n"
+                             "   • Investment: Rp420M, Payback: 20 months\n\n"
+                             "3. **Yogyakarta** (Score: 85/100)\n"
+                             "   • Student market, high meal frequency\n"
+                             "   • Est. monthly revenue: Rp55-62M\n"
+                             "   • Investment: Rp380M, Payback: 16 months\n\n"
+                             "**Not Recommended:** Palembang (saturation), Manado (low demand), Pekanbaru (logistics)."),
+                    "insights": [
+                        {"metric": "Best Location", "value": "Bekasi", "change": "92/100 score"},
+                        {"metric": "Fastest Payback", "value": "Yogyakarta", "change": "16 months"},
+                        {"metric": "Est. Revenue", "value": "Rp62-75M", "change": "per store"},
+                    ],
+                    "recommendations": [
+                        "Prioritize Bekasi for Q3 2024 opening (highest potential)",
+                        "Secure locations in Tangerang and Yogyakarta for Q4 2024",
+                        "Avoid Palembang - market saturated with 12+ competitors",
+                        "Consider smaller format (300 sqm) for Yogyakarta student market",
+                    ],
+                }
+
+            # Break-even analysis
+            elif any(word in question_lower for word in ["break even", "break-even", "profitability", "when profit"]):
+                return {
+                    "answer": ("**Break-Even Analysis:**\n\n"
+                             "**Store-Level Economics:**\n"
+                             "• Monthly fixed costs: Rp42.5M (rent, staff, utilities)\n"
+                             "• Variable cost per order: 62.5% (COGS + delivery commission)\n"
+                             "• Average order value: Rp52,800\n"
+                             "• Contribution margin: Rp19,800/order\n\n"
+                             "**Break-Even Point:** 2,147 orders/month (72 orders/day)\n\n"
+                             "**Current Performance:**\n"
+                             "• All stores profitable except STR015 (Denpasar) - Rp3.2M loss\n"
+                             "• Average store: 4,200 orders/month (195% of break-even)\n"
+                             "• Best store (Jakarta Mall #1): 7,100 orders/month (330% of break-even)\n\n"
+                             "**New store break-even timeline:** Month 4 reach daily run-rate, Month 7 cumulative break-even."),
+                    "insights": [
+                        {"metric": "Break-Even Orders", "value": "2,147/mo", "change": "72/day"},
+                        {"metric": "Avg Store", "value": "4,200/mo", "change": "195% BE"},
+                        {"metric": "Unprofitable Stores", "value": "1", "change": "STR015"},
+                    ],
+                    "recommendations": [
+                        "Close or relocate STR015 Denpasar (below break-even for 6 months)",
+                        "Reduce fixed costs by renegotiating rents (target: Rp38M/store)",
+                        "Increase AOV by 5% (adds Rp1K margin/order → break-even at 68 orders/day)",
+                        "New store target: reach break-even by month 6 (conservative plan)",
+                    ],
+                }
+
+            # P&L summary
+            elif any(word in question_lower for word in ["p&l", "income statement", "financial summary", "bottom line"]):
+                return {
+                    "answer": ("**Monthly P&L Summary (Company Level):**\n\n"
+                             "**Revenue:** Rp458,500,000\n"
+                             "**COGS:** Rp309,475,000 (67.5%)\n"
+                             "**Gross Profit:** Rp149,025,000 (32.5% margin)\n\n"
+                             "**Operating Expenses:**\n"
+                             "• Rent: Rp85,000,000 (18.5%)\n"
+                             "• Labor: Rp72,500,000 (15.8%)\n"
+                             "• Marketing: Rp15,500,000 (3.4%)\n"
+                             "• Utilities/Other: Rp12,200,000 (2.7%)\n"
+                             "**Total Opex:** Rp185,200,000 (40.4%)\n\n"
+                             "**EBITDA:** (Rp36,175,000) **(-7.9% margin)** ⚠️\n\n"
+                             "**Note:** Currently unprofitable due to expansion phase. Target: positive EBITDA by Q4 2024."),
+                    "insights": [
+                        {"metric": "Gross Margin", "value": "32.5%", "change": "-1.7pp"},
+                        {"metric": "EBITDA", "value": "(Rp36.2M)", "change": "-7.9%"},
+                        {"metric": "Largest Opex", "value": "Rent", "change": "18.5%"},
+                    ],
+                    "recommendations": [
+                        "Reduce rent expense to 15% of revenue (renegotiate 3 leases)",
+                        "Optimize labor scheduling (reduce overtime by 30%)",
+                        "Pause expansion until positive EBITDA achieved",
+                        "Increase prices by 3-5% to improve gross margin to 35%",
+                    ],
+                }
+
+            else:  # General financial
+                return {
+                    "answer": ("**Financial Metrics:** Gross margin: **32.5%** (down 1.7pp due to chicken cost increase). "
+                             "Currently at break-even at store level, company EBITDA negative due to expansion investment. "
+                             "Target: positive cash flow by Q4 2024."),
+                    "insights": [
+                        {"metric": "Gross Margin", "value": "32.5%", "change": "-1.7pp"},
+                        {"metric": "EBITDA Margin", "value": "-7.9%", "change": "investment phase"},
+                    ],
+                    "recommendations": [
+                        "Focus on same-store sales growth vs new locations",
+                        "Improve margin through price optimization on inelastic items",
+                    ],
+                }
+
+        # =============================================================================
+        # OPERATIONAL EXCELLENCE
+        # =============================================================================
+
+        elif any(word in question_lower for word in ["peak hour", "busy", "rush", "labor", "staff", "employee", "shift", "schedule", "delivery performance", "late"]):
+
+            # Peak hour analysis
+            if any(word in question_lower for word in ["peak hour", "busy time", "rush", "when busy"]):
+                return {
+                    "answer": ("**Peak Hour Analysis:**\n\n"
+                             "**Primary Peaks:**\n"
+                             "• Lunch: 11:00-13:00 (32% of daily orders)\n"
+                             "• Dinner: 18:00-20:00 (38% of daily orders)\n\n"
+                             "**Secondary Peaks:**\n"
+                             "• Morning: 09:00-10:00 (8% of daily orders)\n"
+                             "• Late Night: 21:00-22:00 (6% of daily orders)\n\n"
+                             "**Current Staffing:**\n"
+                             "• Peak: 4 staff (avg prep time: 26 min - CRITICAL)\n"
+                             "• Off-peak: 2 staff (avg prep time: 12 min - GOOD)\n\n"
+                             "**Recommendation:** Add 1 staff during lunch peak (11:00-14:00) and dinner peak (18:00-21:00). "
+                             "Cost: Rp8M/month → Savings: Rp12M/month in reduced errors + faster service = **ROI 150%**"),
+                    "insights": [
+                        {"metric": "Busiest Hour", "value": "19:00-20:00", "change": "22% orders"},
+                        {"metric": "Peak Prep Time", "value": "26 min", "change": "+73%"},
+                        {"metric": "Off-Peek Prep", "value": "12 min", "change": "within target"},
+                    ],
+                    "recommendations": [
+                        "Add 1 staff member during peak hours (ROI: 150%)",
+                        "Implement shift-specific prep schedules",
+                        "Use part-time staff for peaks (students, 4-hour shifts)",
+                    ],
+                }
+
+            # Delivery performance
+            elif any(word in question_lower for word in ["delivery", "late", "on time", "delivery time"]):
+                return {
+                    "answer": ("**Delivery Performance Analysis:**\n\n"
+                             "**Average Delivery Time:** 34 minutes (target: 30 min)\n\n"
+                             "**By Channel:**\n"
+                             "| Channel | Avg Time | On-Time % | Late % | Issues |\n"
+                             "|---------|-----------|-----------|---------|--------|\n"
+                             "| GoFood | 31 min | 89% | 11% | Bandung delays |\n"
+                             "| GrabFood | 29 min | 93% | 7% | Good |\n"
+                             "| App | 38 min | 81% | 19% | Rider shortage |\n\n"
+                             "**Late Delivery Hotspots:**\n"
+                             "• Bandung (all channels): +8 min vs average\n"
+                             "• Surabaya (GoFood only): +12 min vs average\n"
+                             "• Makassar (all channels): +10 min vs average\n\n"
+                             "**Impact:** Late orders have 4.2x higher cancellation rate and 0.8 point lower rating."),
+                    "insights": [
+                        {"metric": "Avg Delivery Time", "value": "34 min", "change": "+4 min"},
+                        {"metric": "On-Time Rate", "value": "87%", "change": "-3pp"},
+                        {"metric": "Worst City", "value": "Bandung", "change": "+8 min"},
+                    ],
+                    "recommendations": [
+                        "Partner exclusively with GrabFood in Bandung (skip GoFood for now)",
+                        "Hire dedicated riders for Surabaya (cost: +Rp2M, saves Rp6M in refunds)",
+                        "Offer time-based promos (order before 11:30, get 15% off)",
+                        "Extend prep time承诺 by 5 min in app (set expectations correctly)",
+                    ],
+                }
+
+            # Staff optimization
+            elif any(word in question_lower for word in ["labor", "staff", "employee", "shift", "schedule", "overstaff", "understaff"]):
+                return {
+                    "answer": ("**Labor Optimization Analysis:**\n\n"
+                             "**Current Labor Metrics:**\n"
+                             "• Total staff: 184 (FTE equivalent)\n"
+                             "• Labor cost: Rp72.5M/month (15.8% of revenue)\n"
+                             "• Target: 12-14% of revenue\n\n"
+                             "**Overstaffed:** 3 stores (surplus 6 FTE, cost: Rp8.4M/month)\n"
+                             "**Understaffed:** 7 stores (deficit 12 FTE, losing orders)\n\n"
+                             "**Shift Optimization:**\n"
+                             "Converting 8-hour shifts to 4-hour split shifts saves Rp5.2M/month while maintaining coverage.\n\n"
+                             "**Staff Retention:** Current annual turnover: 68% (industry: 85%). Top performers: "
+                             "Jakarta stores (42% turnover), High churn: Makassar (94% turnover)."),
+                    "insights": [
+                        {"metric": "Labor % Revenue", "value": "15.8%", "change": "+1.8pp"},
+                        {"metric": "Overstaff Cost", "value": "Rp8.4M/mo", "change": "3 stores"},
+                        {"metric": "Turnover Rate", "value": "68%", "change": "-17pp vs ind"},
+                    ],
+                    "recommendations": [
+                        "Redistribute 6 FTE from overstaffed to underperforming stores",
+                        "Implement split shifts (4-hour blocks) for better peak coverage",
+                        "Increase Makassar wages by 10% to reduce turnover (saves training cost)",
+                        "Cross-train staff (reduce idle time by 25%)",
+                    ],
+                }
+
+            else:
+                return {
+                    "answer": ("Please specify: 'peak hour analysis', 'delivery performance', or 'staff optimization'."),
+                    "insights": [],
+                    "recommendations": [],
+                }
+
+        # =============================================================================
+        # COMPETITIVE INTELLIGENCE
+        # =============================================================================
+
+        elif any(word in question_lower for word in ["competitor", "competition", "market share", "vs", "versus", "compare"]):
             return {
-                "answer": ("3 stores are below safety stock levels. STR012 (Surabaya) is critical with 45 pieces. "
-                         "Average inventory turnover is 4.8x. Recommend urgent restock for 5 locations."),
+                "answer": ("**Competitive Intelligence Report:**\n\n"
+                          "**Market Share (Jakarta QSR Fried Chicken):**\n"
+                          "| Player | Market Share | Strength | Weakness |\n"
+                          "|--------|--------------|----------|----------|\n"
+                          "| Market Leader | 34% | Brand recognition, 200+ stores | Higher prices |\n"
+                          "| Us (You) | 8% | Fast delivery, app experience | Limited stores |\n"
+                          "| Competitor B | 6% | Low prices | Quality issues |\n"
+                          "| Others | 52% | Fragmented | Varying |\n\n"
+                          "**Competitive Advantages:**\n"
+                          "✅ Best delivery speed (avg 31 min vs 38 min industry)\n"
+                          "✅ Highest app ratings (4.7 vs 4.3 avg)\n"
+                          "✅ Most popular combo (Paket Komplit 1)\n\n"
+                          "**Competitive Gaps:**\n"
+                          "❌ Store count: 50 vs 200+ (leader)\n"
+                          "❌ Brand awareness: 23% vs 78% (leader)\n"
+                          "❌ Pricing: 8% above average (margin vs volume strategy)\n\n"
+                          "**Recommended Strategy:** Focus on quality + speed (don't compete on price). "
+                          "Expand to 100 stores in next 18 months to reach scale."),
                 "insights": [
-                    {"metric": "Critical Stockouts", "value": "3 stores", "change": ""},
-                    {"metric": "Inventory Turnover", "value": "4.8x", "change": "+0.3"},
-                    {"metric": "Urgent Restock", "value": "5 locations", "change": ""},
+                    {"metric": "Market Share", "value": "8%", "change": "#3 player"},
+                    {"metric": "Competitive Edge", "value": "Delivery Speed", "change": "31 min"},
+                    {"metric": "Gap", "value": "Store Count", "change": "50 vs 200"},
                 ],
                 "recommendations": [
-                    "Emergency delivery to STR012 within 3 hours",
-                    "Review safety stock levels for high-traffic stores",
-                    "Consider supplier diversification for Surabaya region",
+                    "Maintain premium pricing (compete on quality, not price)",
+                    "Accelerate store expansion to 100 locations (economies of scale)",
+                    "Leverage app advantage (invest in features, not physical stores)",
+                    "Target competitor's weak markets (Makassar, Palembang)",
                 ],
             }
 
-        # Customer questions
-        elif any(word in question_lower for word in ["customer", "nps", "satisfaction", "rating"]):
+        # =============================================================================
+        # MENU ENGINEERING
+        # =============================================================================
+
+        elif any(word in question_lower for word in ["menu engineering", "menu mix", "star dog", "plow", "puzzle", "menu optimization"]):
             return {
-                "answer": ("NPS is 48, above industry average of 42. However, GoFood ratings dropped to 4.2 in Bandung. "
-                         "1,856 active customers, with 23% being heavy users (5+ orders/week)."),
+                "answer": ("**Menu Engineering Matrix:**\n\n"
+                          "```\n"
+                          "High Margin\n"
+                          "    ▲\n"
+                          "  ⭐ | PL     | STAR   |\n"
+                          "    |------------------→\n "    |        |        |\n"
+                          "    |------------------|\n"
+                          "    | DOG    | PUZZLE |\n"
+                          "    ▼\n"
+                          "Low Margin    Low Volume      High Volume\n"
+                          "```\n\n"
+                          "**STARS** (High margin, High volume) - Keep, promote:\n"
+                          "• Paket Komplit 1 (42% margin, 34% of orders)\n"
+                          "• Ayam Potong 9 (38% margin, 18% of orders)\n\n"
+                          "**PLOWS** (High margin, Low volume) - Push, feature:\n"
+                          "• Party Bucket 20 (42% margin, 2% of orders) - Upsell opportunity!\n"
+                          "• Winger Bucket 7 (40% margin, 3% of orders)\n\n"
+                          "**PUZZLES** (Low margin, High volume) - Improve efficiency:\n"
+                          "• Ayam Potong 3 (28% margin, 15% of orders) - Raise price or bundle\n"
+                          "• Fries (35% margin, 12% of orders) - Good, consider upsize\n\n"
+                          "**DOGS** (Low margin, Low volume) - Remove or bundle:\n"
+                          "• Coleslaw (18% margin, 2% of orders) - Discontinue\n"
+                          "• Bread & Butter (12% margin, 1% of orders) - Bundle only\n\n"
+                          "**Potential Impact:** Removing 2 DOG items and promoting 2 PLOW items could add **Rp18.5M/month** in profit."),
                 "insights": [
-                    {"metric": "NPS Score", "value": "48", "change": "+6 vs industry"},
-                    {"metric": "Active Customers", "value": "1,856", "change": "+12%"},
-                    {"metric": "Heavy Users", "value": "23%", "change": "+3%"},
+                    {"metric": "Stars Count", "value": "2 items", "change": "keep & promote"},
+                    {"metric": "Plows Opportunity", "value": "2 items", "change": "push hard"},
+                    {"metric": "Dogs to Remove", "value": "2 items", "change": "free up 8% capacity"},
                 ],
                 "recommendations": [
-                    "Investigate Bandung GoFood delivery delays",
-                    "Launch loyalty program for heavy users",
-                    "Send satisfaction survey to customers with ratings < 4",
+                    "Feature Party Bucket 20 prominently on app (target: 10% of orders)",
+                    "Bundle DOGS with combos (don't sell standalone)",
+                    "Increase PUZZLE prices by 8% or bundle with high-margin drinks",
+                    "Create 'Family Value' promo to push PL items (Party Bucket)",
                 ],
             }
 
-        # Performance questions
-        elif any(word in question_lower for word in ["perform", "best", "worst", "top", "bottom"]):
-            return {
-                "answer": ("STR001 (Jakarta Mall #1) is top performer with Rp82M monthly revenue. "
-                         "STR015 (Denpasar) needs attention - lowest sales at Rp12M. "
-                         "Paket Komplit 1 is best-selling item (34% of orders)."),
-                "insights": [
-                    {"metric": "Best Store", "value": "STR001 Jakarta", "change": "Rp82M/mo"},
-                    {"metric": "Worst Store", "value": "STR015 Denpasar", "change": "Rp12M/mo"},
-                    {"metric": "Best Item", "value": "Paket Komplit 1", "change": "34% orders"},
-                ],
-                "recommendations": [
-                    "Conduct store audit at STR015 - investigate low foot traffic",
-                    "A/B test Jakarta Mall promotions in Denpasar",
-                    "Feature Paket Komplit 1 more prominently on app",
-                ],
-            }
+        # =============================================================================
+        # DEFAULT - HELP
+        # =============================================================================
 
-        # Default response
-        return {
-            "answer": ("I can help you analyze your QSR business. Try asking about: "
-                     "revenue forecast, inventory levels, customer satisfaction, or store performance."),
-            "insights": [],
-            "recommendations": [],
-        }
+        else:
+            return {
+                "answer": ("**🤖 I can help you analyze your QSR business. Here are questions I can answer:**\n\n"
+                          "**📊 Sales & Revenue:**\n"
+                          "• 'What's my revenue forecast?'\n"
+                          "• 'Analyze channel performance'\n"
+                          "• 'What are my best selling items?'\n"
+                          "• 'Price sensitivity analysis'\n\n"
+                          "**📦 Inventory & Operations:**\n"
+                          "• 'Inventory status and stockouts'\n"
+                          "• 'Supplier performance'\n"
+                          "• 'Food waste analysis'\n"
+                          "• 'Preparation time optimization'\n\n"
+                          "**👥 Customer & Marketing:**\n"
+                          "• 'Customer segmentation'\n"
+                          "• 'Churn analysis and retention'\n"
+                          "• 'Marketing campaign performance'\n"
+                          "• 'Customer lifetime value'\n\n"
+                          "**💰 Financial & Strategy:**\n"
+                          "• 'Break-even analysis'\n"
+                          "• 'P&L summary'\n"
+                          "• 'Where should I open my next store?'\n"
+                          "• 'Profitability analysis'\n\n"
+                          "**⚡ Operations:**\n"
+                          "• 'Peak hour analysis'\n"
+                          "• 'Delivery performance'\n"
+                          "• 'Staff and labor optimization'\n\n"
+                          "**🎯 Competitive Intelligence:**\n"
+                          "• 'Competitor analysis'\n"
+                          "• 'Market share'\n\n"
+                          "**🍔 Menu Engineering:**\n"
+                          "• 'Menu optimization'\n"
+                          "• 'Star-dog analysis'\n\n"
+                          "_Try asking any of these questions!_"),
+                "insights": [],
+                "recommendations": [],
+            }
 
     def calculate_what_if(self, params: Dict[str, float]) -> Dict[str, Any]:
         """Calculate what-if scenarios"""
@@ -788,12 +1402,55 @@ def render_ai_assistant_page():
 
     # Intro message
     if not st.session_state.chat_messages:
-        st.info("💡 Ask me anything about your QSR business! Try questions like:\n\n"
-                "• \"What's my revenue forecast?\"\n"
-                "• \"Which stores are performing best?\"\n"
-                "• \"Do I have any inventory issues?\"\n"
-                "• \"How's customer satisfaction?\"\n"
-                "• \"What are my top selling items?\"")
+        st.info("**🤖 AI Business Assistant** - Ask me anything about your QSR business!\n\n"
+                "**📊 Sales & Revenue:**\n"
+                "• 'What's my revenue forecast?'\n"
+                "• 'Analyze channel performance' (GoFood, GrabFood, App)\n"
+                "• 'What are my best selling items?'\n"
+                "• 'Price sensitivity analysis'\n\n"
+                "**📦 Inventory & Operations:**\n"
+                "• 'Inventory status and stockouts'\n"
+                "• 'Supplier performance'\n"
+                "• 'Food waste analysis'\n"
+                "• 'Preparation time optimization'\n\n"
+                "**👥 Customer & Marketing:**\n"
+                "• 'Customer segmentation'\n"
+                "• 'Churn analysis and retention'\n"
+                "• 'Marketing campaign ROAS'\n"
+                "• 'Customer lifetime value'\n\n"
+                "**💰 Financial & Strategy:**\n"
+                "• 'Break-even analysis'\n"
+                "• 'P&L summary'\n"
+                "• 'Where should I open my next store?'\n\n"
+                "**⚡ Operations:**\n"
+                "• 'Peak hour analysis'\n"
+                "• 'Delivery performance'\n"
+                "• 'Staff and labor optimization'\n\n"
+                "**🎯 Competitive & Menu:**\n"
+                "• 'Competitor analysis'\n"
+                "• 'Menu optimization (star-dog)'")
+
+        # Quick question buttons
+        st.markdown("---")
+        st.markdown("**💬 Quick Questions:**")
+
+        quick_questions = [
+            ("📊 Revenue Forecast", "What's my revenue forecast?"),
+            ("📦 Inventory Issues", "Do I have any inventory issues?"),
+            ("👥 Customer Segments", "Customer segmentation analysis"),
+            ("⚡ Peak Hours", "Peak hour analysis"),
+            ("🆕 New Store Location", "Where should I open my next store?"),
+            ("🎯 Menu Optimization", "Menu optimization star-dog analysis"),
+            ("📈 Channel Performance", "Analyze channel performance"),
+            ("💰 Break-Even Analysis", "Break-even analysis"),
+        ]
+
+        cols = st.columns(4)
+        for i, (label, question) in enumerate(quick_questions):
+            with cols[i % 4]:
+                if st.button(label, key=f"quick_{i}", use_container_width=True):
+                    st.session_state.chat_messages.append({"role": "user", "content": question})
+                    st.rerun()
 
     # Chat container
     chat_container = st.container()
