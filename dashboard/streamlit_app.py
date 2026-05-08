@@ -6,6 +6,7 @@ Streamlit-based dashboard for visualizing analytics and recommendations.
 
 import asyncio
 import json
+import random
 import sys
 import os
 from datetime import datetime, timedelta
@@ -80,6 +81,22 @@ if "selected_domain" not in st.session_state:
 
 if "selected_recommendation" not in st.session_state:
     st.session_state.selected_recommendation = None
+
+# AI Chat state
+if "chat_messages" not in st.session_state:
+    st.session_state.chat_messages = []
+
+# Action tracking
+if "actions_taken" not in st.session_state:
+    st.session_state.actions_taken = []
+
+# What-if scenarios
+if "scenario_params" not in st.session_state:
+    st.session_state.scenario_params = {
+        "marketing_spend_change": 0,
+        "price_adjustment": 0,
+        "staffing_change": 0,
+    }
 
 
 # =============================================================================
@@ -220,6 +237,165 @@ class OpsoraAPI:
             "values": values,
         }
 
+    def ask_ai(self, question: str, context: Dict = None) -> Dict[str, Any]:
+        """Ask AI assistant a question about the business"""
+
+        # Simulate AI analysis based on question keywords
+        question_lower = question.lower()
+
+        # Sales questions
+        if any(word in question_lower for word in ["revenue", "sales", "income", "earning"]):
+            if "forecast" in question_lower or "predict" in question_lower:
+                return {
+                    "answer": ("Based on current trends (12.8% growth rate) and seasonal patterns, "
+                             "I forecast revenue of Rp520M next month (+13% from current). "
+                             "Key drivers: Ramadhan season approaching, GoFood orders up 18%."),
+                    "insights": [
+                        {"metric": "Revenue Forecast", "value": "Rp520M", "change": "+13%"},
+                        {"metric": "Confidence", "value": "87%", "change": ""},
+                        {"metric": "Key Driver", "value": "Seasonal demand", "change": ""},
+                    ],
+                    "recommendations": [
+                        "Increase chicken inventory by 25% for Ramadhan",
+                        "Prepare special combo packages for iftar",
+                        "Schedule additional staff for peak hours (17:00-19:00)",
+                    ],
+                }
+            else:
+                return {
+                    "answer": (f"Current revenue is Rp458.5M with a 12.8% growth rate. "
+                             "Top performing stores are in Jakarta (32% of revenue) and Surabaya (18%). "
+                             "GoFood channel contributes 25% of total orders."),
+                    "insights": [
+                        {"metric": "Current Revenue", "value": "Rp458.5M", "change": "+12.8%"},
+                        {"metric": "Top Store", "value": "Jakarta Mall #1", "change": "32% share"},
+                        {"metric": "Best Channel", "value": "GoFood", "change": "25% orders"},
+                    ],
+                    "recommendations": [
+                        "Expand GoFood presence in underperforming cities",
+                        "Replicate Jakarta Mall #1 practices to other locations",
+                    ],
+                }
+
+        # Inventory questions
+        elif any(word in question_lower for word in ["inventory", "stock", "supply", "chicken"]):
+            return {
+                "answer": ("3 stores are below safety stock levels. STR012 (Surabaya) is critical with 45 pieces. "
+                         "Average inventory turnover is 4.8x. Recommend urgent restock for 5 locations."),
+                "insights": [
+                    {"metric": "Critical Stockouts", "value": "3 stores", "change": ""},
+                    {"metric": "Inventory Turnover", "value": "4.8x", "change": "+0.3"},
+                    {"metric": "Urgent Restock", "value": "5 locations", "change": ""},
+                ],
+                "recommendations": [
+                    "Emergency delivery to STR012 within 3 hours",
+                    "Review safety stock levels for high-traffic stores",
+                    "Consider supplier diversification for Surabaya region",
+                ],
+            }
+
+        # Customer questions
+        elif any(word in question_lower for word in ["customer", "nps", "satisfaction", "rating"]):
+            return {
+                "answer": ("NPS is 48, above industry average of 42. However, GoFood ratings dropped to 4.2 in Bandung. "
+                         "1,856 active customers, with 23% being heavy users (5+ orders/week)."),
+                "insights": [
+                    {"metric": "NPS Score", "value": "48", "change": "+6 vs industry"},
+                    {"metric": "Active Customers", "value": "1,856", "change": "+12%"},
+                    {"metric": "Heavy Users", "value": "23%", "change": "+3%"},
+                ],
+                "recommendations": [
+                    "Investigate Bandung GoFood delivery delays",
+                    "Launch loyalty program for heavy users",
+                    "Send satisfaction survey to customers with ratings < 4",
+                ],
+            }
+
+        # Performance questions
+        elif any(word in question_lower for word in ["perform", "best", "worst", "top", "bottom"]):
+            return {
+                "answer": ("STR001 (Jakarta Mall #1) is top performer with Rp82M monthly revenue. "
+                         "STR015 (Denpasar) needs attention - lowest sales at Rp12M. "
+                         "Paket Komplit 1 is best-selling item (34% of orders)."),
+                "insights": [
+                    {"metric": "Best Store", "value": "STR001 Jakarta", "change": "Rp82M/mo"},
+                    {"metric": "Worst Store", "value": "STR015 Denpasar", "change": "Rp12M/mo"},
+                    {"metric": "Best Item", "value": "Paket Komplit 1", "change": "34% orders"},
+                ],
+                "recommendations": [
+                    "Conduct store audit at STR015 - investigate low foot traffic",
+                    "A/B test Jakarta Mall promotions in Denpasar",
+                    "Feature Paket Komplit 1 more prominently on app",
+                ],
+            }
+
+        # Default response
+        return {
+            "answer": ("I can help you analyze your QSR business. Try asking about: "
+                     "revenue forecast, inventory levels, customer satisfaction, or store performance."),
+            "insights": [],
+            "recommendations": [],
+        }
+
+    def calculate_what_if(self, params: Dict[str, float]) -> Dict[str, Any]:
+        """Calculate what-if scenarios"""
+
+        base_revenue = 458500000
+        base_customers = 1856
+        base_orders = 8420
+
+        # Calculate impacts
+        marketing_impact = params["marketing_spend_change"] * 0.8  # 80% efficiency
+        price_impact = -params["price_adjustment"] * 0.5  # Price elasticity
+        volume_change = marketing_impact + price_impact + (params["staffing_change"] * 0.3)
+
+        projected_revenue = base_revenue * (1 + volume_change)
+        projected_orders = base_orders * (1 + volume_change * 0.9)
+        projected_customers = base_customers * (1 + marketing_impact * 0.6)
+
+        return {
+            "base": {
+                "revenue": base_revenue,
+                "orders": base_orders,
+                "customers": base_customers,
+            },
+            "projected": {
+                "revenue": projected_revenue,
+                "orders": projected_orders,
+                "customers": projected_customers,
+            },
+            "change": {
+                "revenue_percent": volume_change * 100,
+                "orders_percent": volume_change * 90,
+                "customers_percent": marketing_impact * 60,
+            },
+            "recommendations": self._generate_what_if_recommendations(params),
+        }
+
+    def _generate_what_if_recommendations(self, params: Dict) -> List[str]:
+        """Generate recommendations based on what-if parameters"""
+        recs = []
+
+        if params["marketing_spend_change"] > 0.2:
+            recs.append("Monitor ROAS closely - high marketing spend requires >3x return")
+        elif params["marketing_spend_change"] < -0.1:
+            recs.append("Warning: Reducing marketing may impact customer acquisition")
+
+        if params["price_adjustment"] > 0.1:
+            recs.append("Price increase >10% may reduce order frequency")
+        elif params["price_adjustment"] < -0.1:
+            recs.append("Promotional pricing can boost volume but monitor margins")
+
+        if params["staffing_change"] > 0.2:
+            recs.append("Additional staffing improves service speed - target peak hours")
+        elif params["staffing_change"] < -0.1:
+            recs.append("Reducing staff may increase prep times - monitor customer satisfaction")
+
+        if not recs:
+            recs.append("Current parameters are within optimal range")
+
+        return recs
+
 
 api = OpsoraAPI()
 
@@ -237,9 +413,12 @@ def render_sidebar():
     # Page navigation
     pages = {
         "overview": "📊 Overview",
+        "ai_assistant": "🤖 AI Assistant",
+        "what_if": "🔮 What-If Analysis",
         "recommendations": "💡 Recommendations",
+        "actions": "✅ Action Center",
         "analytics": "📈 Analytics",
-        "agents": "🤖 Agents",
+        "agents": "🔧 Agents",
     }
 
     selected_page = st.sidebar.radio(
@@ -599,6 +778,414 @@ def render_agents_page(time_period: str):
 
 
 # =============================================================================
+# AI ASSISTANT PAGE
+# =============================================================================
+
+def render_ai_assistant_page():
+    """Render AI chat assistant page"""
+
+    st.markdown('<h1 class="main-header">🤖 AI Business Assistant</h1>', unsafe_allow_html=True)
+
+    # Intro message
+    if not st.session_state.chat_messages:
+        st.info("💡 Ask me anything about your QSR business! Try questions like:\n\n"
+                "• \"What's my revenue forecast?\"\n"
+                "• \"Which stores are performing best?\"\n"
+                "• \"Do I have any inventory issues?\"\n"
+                "• \"How's customer satisfaction?\"\n"
+                "• \"What are my top selling items?\"")
+
+    # Chat container
+    chat_container = st.container()
+
+    with chat_container:
+        # Display chat history
+        for message in st.session_state.chat_messages:
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
+
+                # Show insights if available
+                if message.get("insights"):
+                    st.markdown("**Key Insights:**")
+                    cols = st.columns(len(message["insights"]))
+                    for i, insight in enumerate(message["insights"]):
+                        with cols[i]:
+                            st.metric(insight["metric"], insight["value"], insight.get("change", ""))
+
+                # Show recommendations if available
+                if message.get("recommendations"):
+                    st.markdown("**Recommendations:**")
+                    for rec in message["recommendations"]:
+                        st.markdown(f"• {rec}")
+
+    # Chat input
+    if prompt := st.chat_input("Ask about your business..."):
+        # Add user message
+        st.session_state.chat_messages.append({"role": "user", "content": prompt})
+
+        # Get AI response
+        with st.spinner("🤖 Analyzing..."):
+            response = api.ask_ai(prompt)
+
+        # Add assistant response
+        assistant_message = {
+            "role": "assistant",
+            "content": response["answer"],
+            "insights": response.get("insights", []),
+            "recommendations": response.get("recommendations", []),
+        }
+        st.session_state.chat_messages.append(assistant_message)
+
+        # Rerender to show new messages
+        st.rerun()
+
+    # Clear chat button
+    if st.session_state.chat_messages:
+        if st.button("🗑️ Clear Chat History", key="clear_chat"):
+            st.session_state.chat_messages = []
+            st.rerun()
+
+
+# =============================================================================
+# WHAT-IF ANALYSIS PAGE
+# =============================================================================
+
+def render_what_if_page():
+    """Render what-if scenario planning page"""
+
+    st.markdown('<h1 class="main-header">🔮 What-If Analysis</h1>', unsafe_allow_html=True)
+
+    st.markdown("""
+    **Scenario Planning:** Adjust parameters to see projected impact on your business.
+    The AI will calculate expected outcomes and provide recommendations.
+    """)
+
+    st.markdown("---")
+
+    # Parameter controls
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        marketing_change = st.slider(
+            "📣 Marketing Spend Change",
+            min_value=-50,
+            max_value=100,
+            value=0,
+            step=5,
+            format="%d%%",
+            help="Increase or decrease marketing budget"
+        )
+
+    with col2:
+        price_change = st.slider(
+            "💰 Price Adjustment",
+            min_value=-20,
+            max_value=30,
+            value=0,
+            step=1,
+            format="%d%%",
+            help="Increase or decrease menu prices"
+        )
+
+    with col3:
+        staffing_change = st.slider(
+            "👥 Staffing Change",
+            min_value=-30,
+            max_value=50,
+            value=0,
+            step=5,
+            format="%d%%",
+            help="Increase or decrease staff levels"
+        )
+
+    # Calculate scenario
+    params = {
+        "marketing_spend_change": marketing_change / 100,
+        "price_adjustment": price_change / 100,
+        "staffing_change": staffing_change / 100,
+    }
+
+    scenario = api.calculate_what_if(params)
+
+    st.markdown("---")
+    st.subheader("📊 Projected Impact")
+
+    # Display projections
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        delta_color = "normal" if scenario["change"]["revenue_percent"] >= 0 else "inverse"
+        st.metric(
+            "Monthly Revenue",
+            format_idr(int(scenario["projected"]["revenue"])),
+            f"{scenario['change']['revenue_percent']:+.1f}%",
+            delta_color=delta_color
+        )
+        st.caption(f"Current: {format_idr(scenario['base']['revenue'])}")
+
+    with col2:
+        delta_color = "normal" if scenario["change"]["orders_percent"] >= 0 else "inverse"
+        st.metric(
+            "Monthly Orders",
+            f"{int(scenario['projected']['orders']):,}",
+            f"{scenario['change']['orders_percent']:+.1f}%",
+            delta_color=delta_color
+        )
+        st.caption(f"Current: {int(scenario['base']['orders']):,}")
+
+    with col3:
+        delta_color = "normal" if scenario["change"]["customers_percent"] >= 0 else "inverse"
+        st.metric(
+            "Active Customers",
+            f"{int(scenario['projected']['customers']):,}",
+            f"{scenario['change']['customers_percent']:+.1f}%",
+            delta_color=delta_color
+        )
+        st.caption(f"Current: {int(scenario['base']['customers']):,}")
+
+    st.markdown("---")
+
+    # AI Recommendations
+    st.subheader("🤖 AI Recommendations")
+    for rec in scenario["recommendations"]:
+        st.markdown(f"• {rec}")
+
+    # Visual comparison
+    st.subheader("📈 Visual Comparison")
+
+    fig = go.Figure()
+
+    # Add current bars
+    fig.add_trace(go.Bar(
+        name="Current",
+        x=["Revenue (M)", "Orders (K)", "Customers (K)"],
+        y=[
+            scenario["base"]["revenue"] / 1_000_000,
+            scenario["base"]["orders"] / 1000,
+            scenario["base"]["customers"] / 1000,
+        ],
+        marker_color="#6c757d"
+    ))
+
+    # Add projected bars
+    fig.add_trace(go.Bar(
+        name="Projected",
+        x=["Revenue (M)", "Orders (K)", "Customers (K)"],
+        y=[
+            scenario["projected"]["revenue"] / 1_000_000,
+            scenario["projected"]["orders"] / 1000,
+            scenario["projected"]["customers"] / 1000,
+        ],
+        marker_color=["#28a745" if scenario["change"]["revenue_percent"] >= 0 else "#dc3545"][0]
+    ))
+
+    fig.update_layout(
+        barmode="group",
+        yaxis_title="Amount",
+        hovermode="x unified",
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+
+# =============================================================================
+# ACTION CENTER PAGE
+# =============================================================================
+
+def render_action_center_page():
+    """Render action center page with interactive recommendations"""
+
+    st.markdown('<h1 class="main-header">✅ Action Center</h1>', unsafe_allow_html=True)
+
+    # Stats row
+    col1, col2, col3, col4 = st.columns(4)
+
+    recommendations = api.get_recommendations()
+
+    pending = len([r for r in recommendations if r["status"] == "pending"])
+    approved = len([r for r in recommendations if r["status"] == "approved"])
+    completed = len([r for r in recommendations if r["status"] == "completed"])
+    dismissed = len(st.session_state.actions_taken)
+
+    with col1:
+        st.metric("⏳ Pending", pending)
+
+    with col2:
+        st.metric("✅ Approved", approved)
+
+    with col3:
+        st.metric("🎯 Completed", completed)
+
+    with col4:
+        st.metric("❌ Dismissed", dismissed)
+
+    st.markdown("---")
+
+    # Tabs for different views
+    tab1, tab2, tab3 = st.tabs(["📋 All Recommendations", "✅ Approved Actions", "📊 Impact Summary"])
+
+    with tab1:
+        st.subheader("AI Recommendations")
+
+        for rec in recommendations:
+            # Determine if action was taken
+            action_taken = next(
+                (a for a in st.session_state.actions_taken if a["id"] == rec["recommendation_id"]),
+                None
+            )
+
+            if action_taken:
+                if action_taken["action"] == "dismissed":
+                    continue  # Skip dismissed recommendations
+                rec["status"] = action_taken["action"]
+
+            # Status badge
+            status_badge = {
+                "pending": "🟡",
+                "approved": "🟢",
+                "completed": "✅",
+                "dismissed": "🔴",
+            }.get(rec["status"], "🟡")
+
+            with st.expander(f"{status_badge} {rec['title']}", expanded=(rec["urgency"] == "critical")):
+                col1, col2 = st.columns([3, 1])
+
+                with col1:
+                    st.markdown(f"**{rec['description']}**")
+
+                    # Tags
+                    st.markdown(f"""
+                    **Domain:** {rec['domain'].title()} |
+                    **Confidence:** {rec['confidence']:.0%} |
+                    **Impact:** {rec['impact'].title()} |
+                    **Effort:** {rec['effort'].title()}
+                    """)
+
+                    # Show simulated impact if approved
+                    if action_taken and action_taken["action"] == "approved":
+                        st.success(f"✅ **Approved** - Expected impact: {action_taken.get('impact', 'Review implementation')}")
+
+                with col2:
+                    # Action buttons (only show if pending)
+                    if rec["status"] == "pending":
+                        col_a, col_b = st.columns(2)
+
+                        with col_a:
+                            if st.button("✅ Approve", key=f"approve_{rec['recommendation_id']}", use_container_width=True):
+                                # Simulate approval with impact
+                                impact = _simulate_impact(rec)
+
+                                st.session_state.actions_taken.append({
+                                    "id": rec["recommendation_id"],
+                                    "action": "approved",
+                                    "title": rec["title"],
+                                    "impact": impact,
+                                    "timestamp": datetime.now().isoformat(),
+                                })
+
+                                st.success(f"Approved! {impact}")
+                                st.rerun()
+
+                        with col_b:
+                            if st.button("❌ Dismiss", key=f"dismiss_{rec['recommendation_id']}", use_container_width=True):
+                                st.session_state.actions_taken.append({
+                                    "id": rec["recommendation_id"],
+                                    "action": "dismissed",
+                                    "title": rec["title"],
+                                    "timestamp": datetime.now().isoformat(),
+                                })
+
+                                st.info("Recommendation dismissed")
+                                st.rerun()
+
+    with tab2:
+        st.subheader("Approved Actions Track")
+
+        approved_actions = [a for a in st.session_state.actions_taken if a["action"] == "approved"]
+
+        if not approved_actions:
+            st.info("No actions approved yet. Go to 'All Recommendations' to approve AI suggestions.")
+        else:
+            for action in approved_actions:
+                with st.container():
+                    col1, col2, col3 = st.columns([3, 1, 1])
+
+                    with col1:
+                        st.markdown(f"**{action['title']}**")
+                        st.markdown(f"*Expected Impact:* {action.get('impact', 'TBD')}")
+
+                    with col2:
+                        st.markdown(f"**Status:** In Progress")
+
+                    with col3:
+                        if st.button("✅ Complete", key=f"complete_{action['id']}", use_container_width=True):
+                            action["action"] = "completed"
+                            action["completed_at"] = datetime.now().isoformat()
+                            st.success("Marked as complete!")
+                            st.rerun()
+
+                    st.markdown("---")
+
+    with tab3:
+        st.subheader("Impact Summary")
+
+        if not st.session_state.actions_taken:
+            st.info("No actions taken yet. Approve recommendations to see projected impact.")
+        else:
+            # Calculate simulated impact
+            approved_count = len([a for a in st.session_state.actions_taken if a["action"] in ["approved", "completed"]])
+
+            # Simulated metrics
+            col1, col2, col3, col4 = st.columns(4)
+
+            with col1:
+                st.metric("Actions Approved", approved_count)
+
+            with col2:
+                revenue_lift = approved_count * 0.05  # 5% average impact
+                st.metric("Revenue Lift", f"+{revenue_lift:.1%}")
+
+            with col3:
+                efficiency_gain = approved_count * 0.08
+                st.metric("Efficiency Gain", f"+{efficiency_gain:.1%}")
+
+            with col4:
+                risk_reduction = approved_count * 2
+                st.metric("Risks Addressed", f"{risk_reduction}")
+
+
+def _simulate_impact(recommendation: Dict) -> str:
+    """Simulate the impact of implementing a recommendation"""
+
+    if recommendation["domain"] == "sales":
+        impacts = [
+            "+5-8% revenue increase in target stores",
+            "3-5% conversion rate improvement",
+            "Rp15-25M additional monthly revenue",
+        ]
+    elif recommendation["domain"] == "operations":
+        impacts = [
+            "15-20% reduction in prep time",
+            "Eliminate stockout risks for 48 hours",
+            "Rp5-10M saved in waste reduction",
+        ]
+    elif recommendation["domain"] == "customer":
+        impacts = [
+            "NPS improvement of 3-5 points",
+            "10-15% reduction in complaints",
+            "5-8% improvement in retention",
+        ]
+    else:
+        impacts = [
+            "Implementation in 2-3 business days",
+            "Monitor for 2 weeks for full impact",
+            "Review metrics after implementation",
+        ]
+
+    return random.choice(impacts)
+
+
+# =============================================================================
 # MAIN APP
 # =============================================================================
 
@@ -611,8 +1198,14 @@ def main():
     # Render selected page
     if st.session_state.page == "overview":
         render_overview_page(time_period)
+    elif st.session_state.page == "ai_assistant":
+        render_ai_assistant_page()
+    elif st.session_state.page == "what_if":
+        render_what_if_page()
     elif st.session_state.page == "recommendations":
         render_recommendations_page(time_period)
+    elif st.session_state.page == "actions":
+        render_action_center_page()
     elif st.session_state.page == "analytics":
         render_analytics_page(time_period)
     elif st.session_state.page == "agents":
